@@ -2,18 +2,22 @@
 
 ## Project Overview
 
-This project demonstrates a simple microservice-based application using **NestJS** and a **Next.js** frontend.
+This project demonstrates a microservice-based application using **NestJS**. It consists of two independent backend services:
 
-### Technologies Used
+* Product Service
+* Order Service
+
+The frontend is developed separately using **Next.js** and consumes these backend APIs.
+
+---
+
+## Technologies Used
 
 * NestJS
-* Next.js
 * TypeScript
-* Material UI
-* React Hook Form
 * MongoDB
+* REST API
 * Render (Backend Deployment)
-* Vercel (Frontend Deployment)
 
 ---
 
@@ -27,7 +31,7 @@ BackendTask/
 └── README.md
 ```
 
-Frontend is available in a separate repository.
+**Frontend is available in a separate repository.**
 
 ---
 
@@ -52,7 +56,7 @@ Frontend is available in a separate repository.
 
 ---
 
-## Deployment
+## Backend Deployment
 
 ### Product Service
 
@@ -96,6 +100,25 @@ http://localhost:4002
 
 ---
 
+## Frontend
+
+The frontend is maintained in a separate repository.
+
+Run it locally using:
+
+```bash
+npm install
+npm run dev
+```
+
+Runs on:
+
+```
+http://localhost:3000
+```
+
+---
+
 ## API Endpoints
 
 ### Product Service
@@ -122,5 +145,5 @@ GET    /order/available-products
 ## Notes
 
 * Product Service and Order Service are deployed independently on Render.
-* Order Service communicates with Product Service using REST APIs.
-* Frontend is developed separately using Next.js and consumes the deployed backend APIs.
+* Order Service communicates with Product Service using HTTP REST APIs.
+* The frontend is developed separately using Next.js and consumes the deployed backend APIs.
