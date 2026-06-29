@@ -1,20 +1,15 @@
-// order-service/src/order/order.controller.ts
-import { Controller, Post, Body, Get, Inject } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
 
 @Controller('order')
 export class OrderController {
-  constructor(
-    private readonly orderService: OrderService,
-    @Inject('PRODUCT_SERVICE') private readonly client: ClientProxy // Inject the client!
-  ) {}
+  constructor(private readonly orderService: OrderService) {}
 
+  // If you need to list products, you should fetch them via HTTP
+  // exactly how OrderService fetches them, rather than using ClientProxy.
   @Get('available-products')
   async getProducts() {
-    // Ensure the product-service is listening for 'get_all_products'
-    return firstValueFrom(this.client.send({ cmd: 'get_all_products' }, {}));
+    return await this.orderService.getAvailableProducts();
   }
 
   @Post()
