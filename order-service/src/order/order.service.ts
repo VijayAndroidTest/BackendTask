@@ -12,7 +12,8 @@ export class OrderService {
       const product = await firstValueFrom(
         this.client.send({ cmd: 'get_product' }, { id: data.productId })
       );
-      
+      console.log("Order received:", data);
+console.log("Sending product id:", data.productId);
       if (!product) throw new Error('Product not found');
       return { success: true, order: { ...data, product } };
     } catch (error) {
