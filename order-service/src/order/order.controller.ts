@@ -1,19 +1,48 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Put,
+  Delete,
+  Param,
+  Body,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 
 @Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  // If you need to list products, you should fetch them via HTTP
-  // exactly how OrderService fetches them, rather than using ClientProxy.
   @Get('available-products')
-  async getProducts() {
-    return await this.orderService.getAvailableProducts();
+  getProducts() {
+    return this.orderService.getAvailableProducts();
   }
 
   @Post()
-  async createOrder(@Body() body: any) {
-    return await this.orderService.createOrder(body);
+  createOrder(@Body() body: any) {
+    return this.orderService.createOrder(body);
+  }
+
+  @Get()
+  findAll() {
+    return this.orderService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.orderService.findOne(Number(id));
+  }
+
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() body: any,
+  ) {
+    return this.orderService.update(Number(id), body);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.orderService.remove(Number(id));
   }
 }

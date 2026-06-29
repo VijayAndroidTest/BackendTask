@@ -1,10 +1,5 @@
-// In product-service/src/product/product.controller.ts
-import { Controller } from '@nestjs/common';
-import { MessagePattern } from '@nestjs/microservices';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { Injectable } from '@nestjs/common';
-
-// 1. Define the structure of your product
 export interface Product {
   id: number;
   name: string;
@@ -13,12 +8,26 @@ export interface Product {
 
 @Injectable()
 export class ProductService {
-  // 2. Explicitly tell TypeScript this is an array of Products
+
   private products: Product[] = [];
 
   create(product: Omit<Product, 'id'>): Product {
-    const newProduct = { id: Date.now(), ...product };
+
+    const existing = this.products.find(
+      p => p.name.toLowerCase() === product.name.toLowerCase(),
+    );
+
+    if (existing) {
+      throw new Error('Product already exists');
+    }
+
+    const newProduct: Product = {
+      id: Date.now(),
+      ...product,
+    };
+
     this.products.push(newProduct);
+
     return newProduct;
   }
 
@@ -26,7 +35,48 @@ export class ProductService {
     return this.products;
   }
 
-  findOne(id: number): Product | undefined {
-    return this.products.find((product) => product.id === Number(id));
+  findOne(id: number): Product {
+
+    const product = this.products.find(p => p.id === id);
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return product;
+  }
+
+  update(id: number, body: Omit<Product, 'id'>): Product {
+
+    const index = this.products.findIndex(p => p.id === id);
+
+    if (index === -1) {
+      throw new NotFoundException('Product not found');
+    }
+
+    this.products[index] = {
+      ...this.products[index],
+      ...body,
+    };
+
+    return this.products[index];
+  }
+
+  remove(id: number) {
+
+    const index = this.products.findIndex(p => p.id === id);
+
+    if (index === -1) {
+      throw new NotFoundException('Product not found');
+    }
+
+    const deleted = this.products[index];
+
+    this.products.splice(index, 1);
+
+    return {
+      message: 'Product deleted successfully',
+      deleted,
+    };
   }
 }

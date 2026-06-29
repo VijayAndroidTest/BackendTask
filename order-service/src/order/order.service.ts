@@ -1,35 +1,125 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
+export interface Order {
+  id: number;
+  fullName: string;
+  email: string;
+  gender: string;
+  product: any;
+}
+
 @Injectable()
 export class OrderService {
-  constructor(private readonly httpService: HttpService) {}
-// Helper method for the controller
+
+  constructor(
+    private readonly httpService: HttpService,
+  ) {}
+
+  private orders: Order[] = [];
+
   async getAvailableProducts() {
-    const url = 'https://backendtask-91bz.onrender.com/products';
-    const response = await firstValueFrom(this.httpService.get(url));
+    const response = await firstValueFrom(
+      this.httpService.get(
+        'https://backendtask-91bz.onrender.com/products',
+      ),
+    );
+
     return response.data;
   }
+
   async createOrder(data: any) {
-    try {
-      // Replace with your actual deployed Product Service URL
-      const PRODUCT_SERVICE_URL = 'https://backendtask-91bz.onrender.com/products';
-      
-      console.log("Fetching product from:", `${PRODUCT_SERVICE_URL}/${data.productId}`);
 
-      // Perform HTTP GET request
-      const response = await firstValueFrom(
-        this.httpService.get(`${PRODUCT_SERVICE_URL}/${data.productId}`)
-      );
+    const response = await firstValueFrom(
+      this.httpService.get(
+        `https://backendtask-91bz.onrender.com/products/${data.productId}`,
+      ),
+    );
 
-      const product = response.data;
-      if (!product) throw new Error('Product not found');
+    const product = response.data;
 
-      return { success: true, order: { ...data, product } };
-    } catch (error) {
-      console.error("Communication error:", error.message);
-      throw new NotFoundException('Product service did not return a valid product.');
+    if (!product) {
+      throw new NotFoundException('Product not found');
     }
+
+    const order: Order = {
+      id: Date.now(),
+      fullName: data["Full Name"],
+      email: data.Email,
+      gender: data.Gender,
+      product,
+    };
+
+    this.orders.push(order);
+
+    return {
+      message: "Order Created Successfully",
+      order,
+    };
+  }
+
+  findAll() {
+    return this.orders;
+  }
+
+  findOne(id: number) {
+
+    const order = this.orders.find(
+      o => o.id === id,
+    );
+
+    if (!order) {
+      throw new NotFoundException(
+        "Order not found",
+      );
+    }
+
+    return order;
+  }
+
+  update(id: number, body: any) {
+
+    const index = this.orders.findIndex(
+      o => o.id === id,
+    );
+
+    if (index === -1) {
+      throw new NotFoundException(
+        "Order not found",
+      );
+    }
+
+    this.orders[index] = {
+      ...this.orders[index],
+      ...body,
+    };
+
+    return this.orders[index];
+  }
+
+  remove(id: number) {
+
+    const index = this.orders.findIndex(
+      o => o.id === id,
+    );
+
+    if (index === -1) {
+      throw new NotFoundException(
+        "Order not found",
+      );
+    }
+
+    const deleted = this.orders[index];
+
+    this.orders.splice(index, 1);
+
+    return {
+      message: "Order deleted successfully",
+      deleted,
+    };
   }
 }

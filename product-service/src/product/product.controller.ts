@@ -1,16 +1,25 @@
-// product-service/src/product/product.controller.ts
-import { Controller, Get, Post, Body, UsePipes, ValidationPipe, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+ Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import { MessagePattern } from '@nestjs/microservices';
 import { ProductService } from './product.service';
-import { CreateProductDto } from './Create-product.dto'; // Import the DTO
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { CreateProductDto } from './Create-product.dto';
 
 @Controller('products')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @UsePipes(new ValidationPipe()) // Ensures validation runs here
-  create(@Body() createDto: CreateProductDto) { // Use the DTO class
+  @UsePipes(new ValidationPipe())
+  create(@Body() createDto: CreateProductDto) {
     return this.productService.create(createDto);
   }
 
@@ -19,21 +28,26 @@ export class ProductController {
     return this.productService.findAll();
   }
 
-  // THIS IS THE MISSING LINK FOR YOUR ORDER SERVICE
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productService.findOne(Number(id));
   }
 
-@MessagePattern({ cmd: 'get_product' })
-handleGetProduct(data: { id: number }) {
-  console.log("Product Service received request for ID:", data.id);
-  console.log("Currently stored products:", this.productService.findAll()); 
-  
-  const product = this.productService.findOne(data.id);
-  console.log("Found product:", product);
-  
-  return product || null; 
-}
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() body: CreateProductDto,
+  ) {
+    return this.productService.update(Number(id), body);
+  }
 
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.productService.remove(Number(id));
+  }
+
+  @MessagePattern({ cmd: 'get_product' })
+  handleGetProduct(data: { id: number }) {
+    return this.productService.findOne(data.id);
+  }
 }
