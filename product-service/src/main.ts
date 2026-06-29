@@ -3,26 +3,16 @@ import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 
 async function bootstrap() {
-  // 1. Create the base application
   const app = await NestFactory.create(AppModule);
 
-  // ADD THIS: Allow your Next.js app to fetch product data
-  app.enableCors({
-    origin: 'http://localhost:3000',
-    methods: 'GET,POST',
-  });
-  // 2. Connect the Microservice (TCP)
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.TCP,
-    options: {
-      host: '127.0.0.1',
-      port: 3001, // Use 3001 for Product, 3002 for Order
-    },
-  });
+  app.enableCors({ origin: '*', methods: 'GET,POST,PUT,DELETE' });
 
-  // 3. Start both the microservice and the HTTP server
-  await app.startAllMicroservices();
-  await app.listen(4001); // This is the HTTP port for your browser access
-  console.log('Application is running on: http://localhost:4001');
+  // REMOVE the app.connectMicroservice and app.startAllMicroservices()
+  // They are not needed if you are using pure REST/HTTP.
+
+  const port = process.env.PORT || 4001;
+  await app.listen(port, '0.0.0.0');
+  console.log(`Product Service running on port: ${port}`);
 }
+bootstrap();
 bootstrap();

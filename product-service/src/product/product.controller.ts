@@ -1,5 +1,5 @@
 // product-service/src/product/product.controller.ts
-import { Controller, Get, Post, Body, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, UsePipes, ValidationPipe, Param } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './Create-product.dto'; // Import the DTO
 import { MessagePattern, Payload } from '@nestjs/microservices';
@@ -17,6 +17,12 @@ export class ProductController {
   @Get()
   findAll() {
     return this.productService.findAll();
+  }
+
+  // THIS IS THE MISSING LINK FOR YOUR ORDER SERVICE
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.productService.findOne(Number(id));
   }
 
 @MessagePattern({ cmd: 'get_product' })
