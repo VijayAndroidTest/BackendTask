@@ -15,7 +15,7 @@ The frontend is developed separately using **Next.js** and consumes these backen
 
 * NestJS
 * TypeScript
-* MongoDB
+* In-Memory Data Storage
 * REST API
 * Render (Backend Deployment)
 
