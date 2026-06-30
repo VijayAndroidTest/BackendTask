@@ -7,7 +7,7 @@ This project demonstrates a microservice-based application using **NestJS**. It 
 * Product Service
 * Order Service
 
-Frontend is available in a separate GitHub repository:
+The frontend source code is available here:
 https://github.com/VijayAndroidTest/FrontEndTask
 
 ---
@@ -20,8 +20,13 @@ https://github.com/VijayAndroidTest/FrontEndTask
 * REST API
 * Render (Backend Deployment)
 
-Important Note :
-This project uses in-memory data storage for both Product Service and Order Service. If either Render service restarts or is redeployed, previously created products and orders will be cleared. To test the Order Service, first create a product using the Product Service API, then use the returned productId when creating an order.
+## Important Note
+   This project uses in-memory data storage for both Product Service and Order Service. If either Render service restarts or is redeployed, previously created products and orders will be cleared.
+
+To test the Order Service:
+1. Create a product using the Product Service API.
+2. Retrieve the returned `productId`.
+3. Use that `productId` when creating an order.
 ---
 
 ## Project Structure
